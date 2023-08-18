@@ -24,12 +24,18 @@ const path = require('path');
 const fs = require('fs-extra');
 const { app } = require('electron');
 
+function resolveToAbsolutePath(path) {
+    return path.replace(/%([^%]+)%/g, function(_, key) {
+        return process.env[key];
+    });
+}
+
 const pathsPrefix = {
     applicationDirectory: path.dirname(app.getAppPath()) + path.sep,
-    dataDirectory: app.getPath('userData') + path.sep,
-    cacheDirectory: app.getPath('cache') + path.sep,
-    tempDirectory: app.getPath('temp') + path.sep,
-    documentsDirectory: app.getPath('documents') + path.sep
+    dataDirectory: ( (global?.cdvElectronSettings?.file?.dataDirectory ? path.resolve(resolveToAbsolutePath(cdvElectronSettings.file?.dataDirectory)):undefined)  || app.getPath('userData') )+ path.sep,
+    cacheDirectory:( (global?.cdvElectronSettings?.file?.cacheDirectory ? path.resolve(resolveToAbsolutePath(cdvElectronSettings.file?.cacheDirectory)):undefined ) || app.getPath('cache')) + path.sep,
+    tempDirectory: ( (global?.cdvElectronSettings?.file?.tempDirectory ?path.resolve(resolveToAbsolutePath(cdvElectronSettings.file?.tempDirectory)) :undefined)  || app.getPath('temp')) + path.sep,
+    documentsDirectory: ( (global?.cdvElectronSettings?.file?.documentsDirectory ? path.resolve(resolveToAbsolutePath(cdvElectronSettings.file?.documentsDirectory)):undefined) ||  app.getPath('documents')) + path.sep
 };
 
 const FileError = {
