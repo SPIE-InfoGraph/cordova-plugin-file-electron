@@ -38,6 +38,14 @@ const pathsPrefix = {
     documentsDirectory: ( (global?.cdvElectronSettings?.file?.documentsDirectory ? path.resolve(resolveToAbsolutePath(cdvElectronSettings.file?.documentsDirectory)):undefined) ||  app.getPath('documents')) + path.sep
 };
 
+for (const key in pathsPrefix) {
+    if (Object.hasOwnProperty.call(pathsPrefix, key)) {
+        const dir = pathsPrefix[key];
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir,{recursive:true});
+        }
+    }
+}
 const FileError = {
     // Found in DOMException
     NOT_FOUND_ERR: 1,
